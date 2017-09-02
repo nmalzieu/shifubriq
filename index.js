@@ -39,7 +39,7 @@ app.post('/shifubriq', function(req, res) {
     user_id: launcherId,
     channel_id: channelId,
   } = req.body
-  
+
   if (channelType !== 'directmessage') {
     res.send('This is not a private message');
   }
@@ -242,16 +242,21 @@ app.post('/action', function(req, res) {
 const end = ({ gameId, winnerId, loserId, move, res }) => {
   const cb = (winnerName, loserName) => {
     res.send(`${winnerName} wins the game 🤗🎉! ${loserName}, you lost 1 bq 😕`);
-    games[gameId] = null;
 
-    const transaction = {
-      amount: 1,
-      comment: "You win bro!!",
-      app: 'shifubriq',
-      from: loserName,
-      to: winnerName
-    };
-    briq.organization('Briq Hackathon #1').createTransaction(transaction);
+    slack.api("team.info", function(err, response) {
+
+      const organizationName = response.team.name
+      games[gameId] = null;
+      const transaction = {
+        amount: 1,
+        comment: "You win bro!!",
+        app: 'shifubriq',
+        from: loserName,
+        to: winnerName
+      };
+      briq.organization(organizationName).createTransaction(transaction);
+
+    });
   }
 
   getPlayersNameAndCallback(winnerId, loserId, cb)
