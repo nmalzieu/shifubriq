@@ -2,10 +2,12 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var Slack = require('slack-node');
+const { WebClient } = require('@slack/client');
 import briq from './briq'
 
 // Global
-const token = 'xoxp-209661177494-208261495968-235417281778-c28a7b46172497caf5f089ea21a42768';
+const token = 'xoxp-2327798584-62327203303-237715289376-034174f5351dc987c338b7a04929ce88';
+// token for efounders, this should be stored from the oauth callback (see access_token)
 const slack = new Slack(token);
 const games = {}
 
@@ -44,8 +46,9 @@ app.post('/shifubriq', function(req, res) {
     res.send('This is not a private message');
   }
 
-  slack.api("im.list", function(err, response) {
+  slack.api("im.list", { limit: 30000 }, function(err, response) {
     response.ims.forEach((im) => {
+      console.log(1, im);
       let receiverId;
       if (im.id === channelId) {
         receiverId = im.user;
@@ -57,7 +60,7 @@ app.post('/shifubriq', function(req, res) {
 
       const gameId = channelId
       const userId = launcherId
-
+      console.log(2, gameId, userId);
       if (!games[gameId]) {
         const cb = (launcherName, receiverName) => {
           const game = {
@@ -238,6 +241,22 @@ app.post('/action', function(req, res) {
     res.status(200).send();
   }
 });
+
+app.get('/oauth', async function(req, res) {
+  const { code } = req.query;
+  const {
+    user_id: userId,
+    team_id: teamId,
+    team_name: teamName,
+    access_token,
+  } = await new WebClient().oauth.access(
+    '209661177494.208949190226',
+    '3ed04dccd2661f198db2e98f7522ca1c',
+    code,
+  );
+  res.status(200).send(access_token);
+
+})
 
 const end = ({ gameId, winnerId, loserId, move, res }) => {
   const cb = (winnerName, loserName) => {
