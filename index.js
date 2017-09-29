@@ -6,7 +6,7 @@ const { WebClient } = require('@slack/client');
 import briq from './briq'
 
 // Global
-const token = 'xoxp-2327798584-62327203303-237715289376-034174f5351dc987c338b7a04929ce88';
+const token = 'xoxp-2327798584-62327203303-248847977459-727be5efb3ee0067f78f72aa7de95bbc';
 // token for efounders, this should be stored from the oauth callback (see access_token)
 const slack = new Slack(token);
 const games = {}
@@ -47,6 +47,10 @@ app.post('/shifubriq', function(req, res) {
   }
 
   slack.api("im.list", { limit: 30000 }, function(err, response) {
+    if (!response.ims) {
+      console.log(3,response)
+      return;
+    }
     response.ims.forEach((im) => {
       console.log(1, im);
       let receiverId;
