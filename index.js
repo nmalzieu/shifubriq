@@ -6,8 +6,7 @@ const { WebClient } = require('@slack/client');
 import briq from './briq'
 
 // Global
-const token = 'xoxp-2327798584-62327203303-248847977459-727be5efb3ee0067f78f72aa7de95bbc';
-// token for efounders, this should be stored from the oauth callback (see access_token)
+const token = process.env.SLACK_TOKEN;
 const slack = new Slack(token);
 const games = {}
 
@@ -254,8 +253,8 @@ app.get('/oauth', async function(req, res) {
     team_name: teamName,
     access_token,
   } = await new WebClient().oauth.access(
-    '209661177494.208949190226',
-    '3ed04dccd2661f198db2e98f7522ca1c',
+    process.env.SLACK_CLIENT_ID,
+    process.env.SLACK_CLIENT_SECRET,
     code,
   );
   res.status(200).send(access_token);

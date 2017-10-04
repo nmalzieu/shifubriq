@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node index.js --presets es2015,stage-2"
+    "start": "babel-node index.js --presets es2015,stage-2",
+    "deploy": "now -e SLACK_CLIENT_ID=@shifubriq_slack_client_id -e SLACK_CLIENT_SECRET=@shifubriq_slack_client_secret -e SLACK_TOKEN=@shifubriq_slack_token",
   },
   "author": "",
   "license": "ISC",
